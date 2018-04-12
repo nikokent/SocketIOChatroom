@@ -1,0 +1,114 @@
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script>
+    var socket = io.connect();
+    //listener of client
+    $(document).ready(function(){
+        socket.on('updateHeader', function(data){
+            //document.getElementById('myTitle').innerHTML = data;
+            addToList(data);
+            $('#container').scrollTop($('#container')[0].scrollHeight);
+        });
+        socket.on('data',function(data){
+            data.forEach(element => {
+                addToList(element);
+            });
+        });
+    });
+
+    //emitter of client
+    function submitMessage(){
+        var message = $('#msg').val();
+        if(message.length > 0){
+            myAddToList(message);
+            socket.emit('sendmsg', message);
+        }
+        $('#container').scrollTop($('#container')[0].scrollHeight);
+    }
+
+    function addToList(data){
+        var list = document.getElementById('container');
+        var message = data;
+        var row = document.createElement('div');
+        row.className = "w3-row";
+        var card = document.createElement('div');
+        card.className = "w3-card-4 w3-animate-left ";
+        card.style = "margin-bottom:20px; width: 40%; background-color:white;border-radius: 5px; padding:1px;";
+        var text = document.createElement('p');
+        text.innerText = message;
+        card.appendChild(text);
+        row.appendChild(card);
+        list.appendChild(row);
+    }
+    function myAddToList(data){
+        var list = document.getElementById('container');
+        var message = data;
+        var row = document.createElement('div');
+        row.className = "w3-row";
+        var card = document.createElement('div');
+        card.className = "w3-card-4 w3-animate-right ";
+        card.style = "margin-bottom:20px; width: 40%; background-color:white;border-radius: 5px; padding:1px;float: right;";
+        var text = document.createElement('p');
+        text.innerText = message;
+        card.appendChild(text);
+        row.appendChild(card);
+        list.appendChild(row);
+    }
+    
+</script>
+<html>
+    <body>
+        <div id="container" class="w3-container w3-center w3-margin">
+            <div class="w3-row" id="msg-area">
+                
+            </div>
+        </div>
+        <div class="w3-container w3-card-4" id="entry">
+            <div class="w3-row">
+                <input type="text" name="msg" id="msg" value="">
+                <input id="btn" type="button" name="send" value="Send" onclick="submitMessage()">
+            </div>
+        </div>
+        
+    </body>
+
+</html>
+
+<style>
+    body{
+        background: linear-gradient(to bottom, #1e5799 0%,#14486b 99%);
+    }
+    #container{
+        background-color:red;
+        text-align: center;
+        border-radius: 15px;
+        background-color: transparent;
+        overflow-y: scroll;
+        height:88%;
+    }
+    #entry{
+        height:8%;
+        position: fixed;
+        bottom: 0px;
+        background: white;
+        width: 100%;
+    }
+    #msg{
+        width: 95%;
+        position: relative;
+        top: 20px;
+        border-radius: 10px;
+        border-width: 1px;
+    }
+    #btn{
+        position: relative;
+        top: 20px;
+    }
+    input:focus{
+        outline: none;
+    }
+</style>
